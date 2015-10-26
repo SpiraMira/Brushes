@@ -38,7 +38,7 @@
 
 - (void) done:(id)sender
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) loadView
@@ -50,10 +50,10 @@
     table.dataSource = activityManager;
     table.allowsSelection = NO;
     
-    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//        self.preferredContentSize = table.frame.size;
+//    else
         self.preferredContentSize = table.frame.size;
-    else
-        self.contentSizeForViewInPopover = table.frame.size;
     
     
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {

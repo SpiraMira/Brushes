@@ -179,7 +179,7 @@ const NSUInteger WDPaintingSizeCurrentVersion = 1;
 
 - (void) cancel:(id)sender
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) create:(id)sender
@@ -187,7 +187,7 @@ const NSUInteger WDPaintingSizeCurrentVersion = 1;
     [self commitEdits];
     
     [self.browserController createNewPainting:CGSizeMake(width, height)];
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (NSArray *) defaultToolbarItems
@@ -454,10 +454,10 @@ const NSUInteger WDPaintingSizeCurrentVersion = 1;
     scrollView.delegate = self;
     scrollView.opaque =  YES;
     
-    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//        self.preferredContentSize = self.view.frame.size;
+//    else
         self.preferredContentSize = self.view.frame.size;
-    else
-        self.contentSizeForViewInPopover = self.view.frame.size;
 }
 
 - (void) viewWillAppear:(BOOL)animated

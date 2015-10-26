@@ -11,6 +11,7 @@
 
 #import <Twitter/Twitter.h>
 #import <MessageUI/MessageUI.h>
+#import <Social/Social.h>
 
 #import "UIImage+Resize.h"
 #import "UIImage+Additions.h"
@@ -80,7 +81,7 @@
         return nil;
     }
     
-    [self setWantsFullScreenLayout:YES];
+//    [self setWantsFullScreenLayout:YES];
     
     return self;
 }
@@ -440,7 +441,7 @@
     if ([controller respondsToSelector:@selector(setPreferredContentSize:)])
         controller.preferredContentSize = actionMenu_.frame.size;
     else
-        controller.contentSizeForViewInPopover = actionMenu_.frame.size;
+        controller.preferredContentSize = actionMenu_.frame.size;
     
     visibleMenu_ = actionMenu_;
     [self validateVisibleMenuItems];
@@ -512,7 +513,7 @@
     
     UIViewController *controller = [[UIViewController alloc] init];
     controller.view = gearMenu_;
-    controller.contentSizeForViewInPopover = gearMenu_.frame.size;
+//    controller.contentSizeForViewInPopover = gearMenu_.frame.size;
     controller.preferredContentSize = gearMenu_.frame.size;
     
     visibleMenu_ = gearMenu_;
@@ -529,18 +530,18 @@
     [facebookSheet setInitialText:NSLocalizedString(@"Check out my Brushes painting! http://brushesapp.com",
                                                     @"Check out my Brushes painting! http://brushesapp.com")];
     
-    [self presentModalViewController:facebookSheet animated:YES];
+    [self presentViewController:facebookSheet animated:YES completion:nil];
 }
 
 - (void) tweetPainting:(id)sender
 {
-    TWTweetComposeViewController *tweetSheet = [[TWTweetComposeViewController alloc] init];
+    SLComposeViewController *tweetSheet = [[SLComposeViewController alloc] init];
     
     [tweetSheet addImage:[canvas_.painting imageForCurrentState]];
     [tweetSheet setInitialText:NSLocalizedString(@"Check out my Brushes #painting! @brushesapp",
                                                  @"Check out my Brushes #painting! @brushesapp")];
     
-    [self presentModalViewController:tweetSheet animated:YES];
+    [self presentViewController:tweetSheet animated:YES completion:nil];
 }
 
 - (void) validateMenuItem:(WDMenuItem *)item
@@ -877,10 +878,22 @@
         
         NSString *label = [NSString stringWithFormat:@"%lu", (unsigned long)index];
         
-        [label drawInRect:CGRectOffset(layerBox, 0, 1)
-                 withFont:[UIFont boldSystemFontOfSize:13]
-            lineBreakMode:UILineBreakModeClip
-                alignment:UITextAlignmentCenter];
+//        UIFont *font = [UIFont fontWithName:@"Courier" size:kCellFontSize];
+        UIFont *font = [UIFont boldSystemFontOfSize:13];
+        /// Make a copy of the default paragraph style
+        NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        /// Set line break mode
+        paragraphStyle.lineBreakMode = NSLineBreakByClipping;
+        /// Set text alignment
+        paragraphStyle.alignment = NSTextAlignmentCenter;
+        NSDictionary *attributes = @{ NSFontAttributeName: font,
+                                      NSParagraphStyleAttributeName: paragraphStyle };
+        [label drawInRect:CGRectOffset(layerBox, 0, 1) withAttributes:attributes];
+                        
+//        [label drawInRect:CGRectOffset(layerBox, 0, 1)
+//           withAttributes:attributes];[NSFontAttributeName,[UIFont boldSystemFontOfSize:13]
+//            lineBreakMode:NSLineBreakByClipping
+//                alignment:NSTextAlignmentCenter];
     }
 
     UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
@@ -1227,8 +1240,9 @@
     background.opaque = YES;
     
     // TODO: temp fix for black artifacts/jagged lines
-    //background.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
-    background.backgroundColor = [UIColor colorWithWhite:1 alpha:1];
+    // background.backgroundColor = [UIColor colorWithWhite:1 alpha:1];
+    // PAK - FIX (above) should no longer be needed. test...
+    background.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
     
     self.view = background;
     

@@ -37,16 +37,16 @@
     return self;
 }
 
-- (void) dealloc
-{
-    if (dispatchQueue_) {
-        dispatch_release(dispatchQueue_);
-    }
-    
-    if (dispatchGroup_) {
-        dispatch_release(dispatchGroup_);
-    }
-}
+//- (void) dealloc
+//{
+//    if (dispatchQueue_) {
+//        dispatch_release(dispatchQueue_);
+//    }
+//    
+//    if (dispatchGroup_) {
+//        dispatch_release(dispatchGroup_);
+//    }
+//}
 
 - (WDCodingProgress *) progress
 {

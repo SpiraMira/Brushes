@@ -42,7 +42,7 @@
 
 - (void) cancel:(id)sender
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (WDImageButton *) imageButtonWithImage:(NSString *)image tag:(int)tag
@@ -132,10 +132,10 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     
-    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//        self.preferredContentSize = self.view.frame.size;
+//    else
         self.preferredContentSize = self.view.frame.size;
-    else
-        self.contentSizeForViewInPopover = self.view.frame.size;
 }
 
 - (void)viewDidUnload

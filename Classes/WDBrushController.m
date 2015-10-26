@@ -272,10 +272,10 @@
     
     self.preview.contentMode = UIViewContentModeCenter;
     
-    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//        self.preferredContentSize = self.view.frame.size;
+//    else
         self.preferredContentSize = self.view.frame.size;
-    else
-        self.contentSizeForViewInPopover = self.view.frame.size;
     
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         self.topBar.ignoreTouches = YES;

@@ -117,10 +117,10 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
     
     self.toolbarItems = [self toolbarItems];
     
-    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//        self.preferredContentSize = CGSizeMake(320, 480);
+//    else
         self.preferredContentSize = CGSizeMake(320, 480);
-    else
-        self.contentSizeForViewInPopover = CGSizeMake(320, 480);
     
     return self;
 }

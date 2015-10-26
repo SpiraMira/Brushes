@@ -111,7 +111,7 @@ static NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     
     WDEmail *email = [[WDEmail alloc] init];
     email.completeAttachments = 0;
-    email.expectedAttachments = [selectedPaintings_ count];
+    email.expectedAttachments = (int)[selectedPaintings_ count];
     email.picker = picker;
     
     WDPaintingIterator *iterator = [[WDPaintingIterator alloc] init];
@@ -744,7 +744,7 @@ static NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     WDEmail *email = aNotification.object;
     if (++email.completeAttachments == email.expectedAttachments) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.navigationController presentModalViewController:email.picker animated:YES];
+            [self.navigationController presentViewController:email.picker animated:YES completion:nil];
         });
     }
 }
