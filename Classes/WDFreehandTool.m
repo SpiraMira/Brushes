@@ -169,6 +169,12 @@
     float pressure = 1.0f;
     
     if (!self.realPressure) {
+        
+        //  TODO: (PAK - FakePressure processing) Without a stylus we are simulating pressure
+        //  using the "verlocity" of the stroke as computed by the recognizer.
+        //  Is it worth doing this for every gesture?  Or should
+        //  Or should we pre-compute some default values.
+        
         if ([recognizer respondsToSelector:@selector(velocityInView:)]) {
             CGPoint velocity = [(UIPanGestureRecognizer *) recognizer velocityInView:recognizer.view];
             float   speed = WDMagnitude(velocity) / 1000.0f; // pixels/millisecond
@@ -246,6 +252,11 @@
         [painting.activeLayer commitStroke:strokeBounds_ color:color erase:eraseMode undoable:YES];
     }
     
+    //  TODO: (PAK - ActivePath Releasing/Sync)
+    //  The canvas painting's layer blits key off of activepath for the activelayer.
+    //  We may be releasing this too early, since canvas redraw is asynchronous.
+    //  Caught this side effect in the debugger, may not happen in real life...but
+    //  something to look into.
     painting.activePath = nil;
     
     [super gestureEnded:recognizer];
@@ -257,7 +268,9 @@
     WDPainting  *painting = canvas.painting;
     
     painting.activePath = nil;
-    [canvas drawView];
+    
+    // TODO: (PAK - why?)  Is this redraw call really necessary
+    // [canvas drawView];
     
     [super gestureCanceled:recognizer];
 }

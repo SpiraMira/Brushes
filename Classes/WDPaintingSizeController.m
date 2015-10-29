@@ -16,12 +16,14 @@
 #import "WDUtilities.h"
 
 NSString *WDPaintingSizeIndex = @"WDPaintingSizeIndex";
+NSString *WDPaintingSizeVersion = @"WDPaintingSizeVersion";
 NSString *WDCustomSizeWidth = @"WDCustomSizeWidth";
 NSString *WDCustomSizeHeight = @"WDCustomSizeHeight";
 NSString *WDPaintingOrientationRotated = @"WDPaintingOrientationRotated";
 
 const NSUInteger WDMinimumDimension = 64;
 const NSUInteger WDMaximumDimension = 2048;
+const NSUInteger WDPaintingSizeCurrentVersion = 1;
 
 #define kWDEdgeBuffer 25
 
@@ -102,6 +104,18 @@ const NSUInteger WDMaximumDimension = 2048;
         needToRebuildIndex = (currentIndex < 0 || currentIndex >= docSizes.count) ? YES : NO;
     }
     
+    if (![defaults objectForKey:WDPaintingSizeVersion]) {
+        needToRebuildIndex = YES;
+        [defaults setObject:@(WDPaintingSizeCurrentVersion) forKey:WDPaintingSizeVersion];
+    } else {
+        NSInteger version = [defaults integerForKey:WDPaintingSizeVersion];
+        if (version != WDPaintingSizeCurrentVersion)
+        {
+            needToRebuildIndex = YES;
+            [defaults setObject:@(WDPaintingSizeCurrentVersion) forKey:WDPaintingSizeVersion];
+        }
+    }
+    
     if (needToRebuildIndex) {
         // find the best fit for this screen
         CGSize      screenSize = WDMultiplySizeScalar([UIScreen mainScreen].bounds.size, [UIScreen mainScreen].scale);
@@ -165,7 +179,7 @@ const NSUInteger WDMaximumDimension = 2048;
 
 - (void) cancel:(id)sender
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) create:(id)sender
@@ -173,7 +187,7 @@ const NSUInteger WDMaximumDimension = 2048;
     [self commitEdits];
     
     [self.browserController createNewPainting:CGSizeMake(width, height)];
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (NSArray *) defaultToolbarItems
@@ -254,7 +268,7 @@ const NSUInteger WDMaximumDimension = 2048;
     int     ix = 0;
     BOOL    buildMiniCanvases = self.miniCanvases.count == 0 ? YES : NO;
     
-    for (NSDictionary *dict in self.configuration) {
+    for (int i = 0;i < self.configuration.count;i++) {
         size = [self sizeForPage:ix];
         
         float percentage = [self canvasScalePercentage];
@@ -440,7 +454,10 @@ const NSUInteger WDMaximumDimension = 2048;
     scrollView.delegate = self;
     scrollView.opaque =  YES;
     
-    self.contentSizeForViewInPopover = self.view.frame.size;
+//    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//        self.preferredContentSize = self.view.frame.size;
+//    else
+        self.preferredContentSize = self.view.frame.size;
 }
 
 - (void) viewWillAppear:(BOOL)animated

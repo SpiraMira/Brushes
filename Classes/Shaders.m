@@ -48,6 +48,9 @@
 */
 
 #import "Shaders.h"
+#import "debug.h"
+
+#define DEBUG
 
 /* Create and compile a shader from the provided source(s) */
 GLint compileShader(GLuint *shader, GLenum type, GLsizei count, NSString *file)
@@ -66,7 +69,7 @@ GLint compileShader(GLuint *shader, GLenum type, GLsizei count, NSString *file)
     glCompileShader(*shader);					// compile shader
 	
 #if defined(DEBUG)
-	GLint logLength;
+	GLint logLength;                
     glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
     if (logLength > 0)
     {
@@ -81,7 +84,8 @@ GLint compileShader(GLuint *shader, GLenum type, GLsizei count, NSString *file)
     if (status == GL_FALSE) {
 		NSLog(@"Failed to compile shader: %@", file);
 	}
-	
+    glError();
+
 	return status;
 }
 
@@ -108,6 +112,7 @@ GLint linkProgram(GLuint prog)
     glGetProgramiv(prog, GL_LINK_STATUS, &status);
     if (status == GL_FALSE)
 		NSLog(@"Failed to link program %d", prog);
+    glError();
 	
 	return status;
 }
@@ -131,6 +136,7 @@ GLint validateProgram(GLuint prog)
     glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
     if (status == GL_FALSE)
 		NSLog(@"Failed to validate program %d", prog);
+    glError();
 	
 	return status;
 }

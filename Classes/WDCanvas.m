@@ -191,6 +191,10 @@ NSString *WDGestureEndedNotification = @"WDGestureEnded";
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.exclusiveTouch = YES;
     self.opaque = YES;
+    
+    //TODO: temp fix for black artifacts/jagged lines
+    //self.backgroundColor = [UIColor colorWithWhite:1 alpha:1];
+    // PAK - FIX (above) should no longer be needed. test...
     self.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
     
     [self configureGestures];
@@ -563,27 +567,30 @@ NSString *WDGestureEndedNotification = @"WDGestureEnded";
     
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
+    
     // handle viewing matrices
     GLfloat proj[16], effectiveProj[16], final[16];
-    // setup projection matrix (orthographic)        
+    // setup projection matrix (orthographic)
     mat4f_LoadOrtho(0, mainRegion.width / scale, 0, mainRegion.height / scale, -1.0f, 1.0f, proj);
     
     mat4f_LoadCGAffineTransform(effectiveProj, canvasTransform_);
     mat4f_MultiplyMat4f(proj, effectiveProj, final);
     
-    [self drawWhiteBackground:final];
+    // TODO: temp fix for black artifacts/jagged lines
+    // [self drawWhiteBackground:final];
+    // PAK - FIX (above) should no longer be needed. test...
 
     // ask the painter to render
     [self.painting blit:final];
 
     // restore blending functions
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     if (photoPlacementMode_) {
         [self renderPhoto:final withTransform:photoTransform_];
     }
     
+    // Frame
     WDShader *blitShader = [self.painting getShader:@"straightBlit"];
     [WDShadowQuad configureBlit:final withShader:blitShader];
     for (WDShadowQuad *shadowSegment in self.shadowSegments) {
@@ -595,8 +602,10 @@ NSString *WDGestureEndedNotification = @"WDGestureEnded";
         glClearColor(randomColor.red, randomColor.green, randomColor.blue, 0.5f);
         glClear(GL_COLOR_BUFFER_BIT);
     }
-    glDisable(GL_SCISSOR_TEST);
 
+    glDisable(GL_SCISSOR_TEST);
+    
+    // Show me
     [mainRegion present];
     
     WDCheckGLError();
@@ -1161,7 +1170,7 @@ NSString *WDGestureEndedNotification = @"WDGestureEnded";
         messageLabel_ = [[WDLabel alloc] initWithFrame:CGRectInset(CGRectMake(0,0,100,40), -8, -8)];
         messageLabel_.textColor = [UIColor whiteColor];
         messageLabel_.font = [UIFont boldSystemFontOfSize:24.0f];
-        messageLabel_.textAlignment = UITextAlignmentCenter;
+        messageLabel_.textAlignment = NSTextAlignmentCenter;
         messageLabel_.opaque = NO;
         messageLabel_.backgroundColor = nil;
         messageLabel_.alpha = 0;

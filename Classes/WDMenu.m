@@ -38,10 +38,10 @@
 {
     float   maxWidth = 0;
     float   height = 0;
-    
+
     for (WDMenuItem *item in items) {
         int imageWidth = [item imageWidth] ? [item imageWidth] + kImageBuffer : 0;
-        maxWidth = MAX(maxWidth, [item.title sizeWithFont:[UIFont boldSystemFontOfSize:kFontSize]].width + imageWidth);
+        maxWidth = MAX(maxWidth, [item.title sizeWithAttributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:kFontSize]}].width + imageWidth);
         height += (item.separator ? kSeparatorHeight : kMenuHeight);
     }
     
