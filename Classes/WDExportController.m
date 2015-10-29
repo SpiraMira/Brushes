@@ -42,7 +42,7 @@
 
 - (void) cancel:(id)sender
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (WDImageButton *) imageButtonWithImage:(NSString *)image tag:(int)tag
@@ -103,7 +103,8 @@
                                                                                   action:@selector(cancel:)];
         self.navigationItem.leftBarButtonItem = cancelItem;
     }
-    
+
+
     // configure the matrix
     WDMatrix *matrix = (WDMatrix *) self.view;
     matrix.rows = 2;
@@ -131,7 +132,10 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     
-    self.contentSizeForViewInPopover = self.view.frame.size;
+//    if ([self respondsToSelector:@selector(setPreferredContentSize:)])
+//        self.preferredContentSize = self.view.frame.size;
+//    else
+        self.preferredContentSize = self.view.frame.size;
 }
 
 - (void)viewDidUnload
@@ -169,6 +173,9 @@
 
 - (void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
+    if (!WDDeviceIsPhone())
+        return;
+    
     WDMatrix *matrix = (WDMatrix *) self.view;
     
     if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {

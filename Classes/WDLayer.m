@@ -816,8 +816,13 @@ static NSString *WDVisibleKey = @"visible";
 
 }
 
+#define WD_DEBUG 1
+#import "WDUtilities.h"
+
 - (void) blit:(GLfloat *)proj withMask:(GLuint)maskTexture color:(WDColor *)color
 {
+    WDCheckGLError();
+    
 	// use shader program
     WDShader *blitShader = [self.painting getShader:@"blitWithMask"];
 	glUseProgram(blitShader.program);
@@ -832,7 +837,7 @@ static NSString *WDVisibleKey = @"visible";
     // Bind the texture to be used
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, self.textureName);
-                                  
+    
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, maskTexture);
     
@@ -843,10 +848,16 @@ static NSString *WDVisibleKey = @"visible";
     
     // unbind VAO
     glBindVertexArrayOES(0);
+    
+    WDCheckGLError();
+
 }
+
 
 - (void) blit:(GLfloat *)proj withEraseMask:(GLuint)maskTexture
 {
+    WDCheckGLError();
+
 	// use shader program
     WDShader *blitShader = [self.painting getShader:@"blitWithEraseMask"];
 	glUseProgram(blitShader.program);
@@ -870,6 +881,9 @@ static NSString *WDVisibleKey = @"visible";
     
     // unbind VAO
     glBindVertexArrayOES(0);
+    
+    WDCheckGLError();
+
 }
 
 - (void) modifyWithBlock:(void (^)())modifyBlock newTexture:(BOOL)useNewTexture undoBits:(BOOL)undo

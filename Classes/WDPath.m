@@ -782,6 +782,7 @@ typedef struct {
         sign = signbit(brush.intensityDynamics.value);
         p = sign ? pressure : (1.0f - pressure);
         float alpha = MAX(0.01, brush.intensity.value - fabs(brush.intensityDynamics.value) * p * brush.intensity.value);
+//        float alpha = 0.0;
         
         [points_ addObject:[NSValue valueWithCGPoint:pos]];
         [sizes_ addObject:@(brushSize)];

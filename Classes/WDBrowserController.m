@@ -111,7 +111,7 @@ static NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     
     WDEmail *email = [[WDEmail alloc] init];
     email.completeAttachments = 0;
-    email.expectedAttachments = [selectedPaintings_ count];
+    email.expectedAttachments = (int)[selectedPaintings_ count];
     email.picker = picker;
     
     WDPaintingIterator *iterator = [[WDPaintingIterator alloc] init];
@@ -142,8 +142,19 @@ static NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 {
     for (NSString *name in selectedPaintings_) {
         WDDocument *document = [[WDPaintingManager sharedInstance] paintingWithName:name];
-        NSString *extension = [document fileNameExtensionForType:contentType saveOperation:UIDocumentSaveForCreating];
-        NSString *fullName = [name stringByAppendingPathExtension:extension];
+
+        NSString *extension = nil;
+        
+        if ([contentType isEqualToString:kWDBrushesFileType])
+            extension = kWDBrushesFileType;
+        else
+            extension = [document fileNameExtensionForType:contentType saveOperation:UIDocumentSaveForCreating];
+        
+        NSString *fullName = name;
+        
+        if (extension)
+            fullName = [name stringByAppendingPathExtension:extension];
+
         NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:fullName];
         WDActivity *exportActivity = [WDActivity activityWithFilePath:path type:WDActivityTypeExport];
         [activities_ addActivity:exportActivity];
@@ -160,15 +171,22 @@ static NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }
     
     NSString *contentType = [WDDocument contentTypeForFormat:format];
+    
     [self startExportActivity:contentType];
     
     WDPaintingIterator *iterator = [[WDPaintingIterator alloc] init];
     iterator.paintings = [selectedPaintings_ allObjects];
     iterator.block = ^void(WDDocument *document) {
-        NSString *extension = [document fileNameExtensionForType:contentType saveOperation:UIDocumentSaveForCreating];
+        NSString *extension = nil;
+        
+        if ([contentType isEqualToString:kWDBrushesFileType])
+            extension = kWDBrushesFileType;
+        else
+            extension = [document fileNameExtensionForType:contentType saveOperation:UIDocumentSaveForCreating];
+        
         NSString *fullName = [document.displayName stringByAppendingPathExtension:extension];
         NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:fullName];
-
+        
         NSError *err = nil;
         if ([document writeTemp:path type:contentType error:&err]) {
             [restClient_ uploadFile:[path lastPathComponent] toPath:[self appFolderPath]
@@ -594,12 +612,15 @@ static NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 - (NSString*) appFolderPath
 {
+    return @"/";
+    /*
     NSString* appFolderPath = @"Brushes";
     if (![appFolderPath isAbsolutePath]) {
         appFolderPath = [@"/" stringByAppendingString:appFolderPath];
     }
     
-    return appFolderPath;    
+    return appFolderPath;
+    */
 }
 
 - (void) properlyEnableNavBarItems
@@ -723,7 +744,7 @@ static NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     WDEmail *email = aNotification.object;
     if (++email.completeAttachments == email.expectedAttachments) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.navigationController presentModalViewController:email.picker animated:YES];
+            [self.navigationController presentViewController:email.picker animated:YES completion:nil];
         });
     }
 }
